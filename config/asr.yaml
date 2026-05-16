@@ -1,5 +1,5 @@
 model: base          # tiny | base | small | medium | large
 language: null       # null = auto-detect, or e.g. "en", "es"
 task: transcribe     # transcribe | translate
-device: cpu          # cpu | cuda
-fp16: false          # set true for GPU inference
+device: cpu          # cpu | mps (Apple M1/M2 Metal) | cuda
+fp16: false          # set true on GPU/MPS for faster inference
