@@ -51,9 +51,11 @@ def load_config(path: Path) -> dict:
               help="HuggingFace token for pyannote models (or set HF_TOKEN in .env)")
 @click.option("--num-speakers", default=7, show_default=True,
               help="Total number of distinct speakers in the recording")
+@click.option("--diarize-model", default="pyannote/speaker-diarization-3.1", show_default=True,
+              help="Pyannote diarization model. Use 'pyannote/speaker-diarization-community-1' if 3.1 terms not yet accepted.")
 @click.option("--config", "config_path", default="config/asr.yaml",
               type=click.Path(exists=True), show_default=True)
-def transcribe(audio_path, output_dir, hf_token, num_speakers, config_path):
+def transcribe(audio_path, output_dir, hf_token, num_speakers, config_path, diarize_model):
     """Transcribe audio and segment by speaker using WhisperX + pyannote."""
     _suppress_noise()
 
@@ -88,6 +90,7 @@ def transcribe(audio_path, output_dir, hf_token, num_speakers, config_path):
     log.info(f"Speakers    : {num_speakers}")
 
     import whisperx
+    from whisperx.diarize import DiarizationPipeline
 
     # ── Step 1: Transcribe ─────────────────────────────────────────────────
     log.info("Step 1/3  Transcribing... (this takes a while for long audio)")
@@ -112,10 +115,13 @@ def transcribe(audio_path, output_dir, hf_token, num_speakers, config_path):
 
     # ── Step 3: Speaker diarization ────────────────────────────────────────
     log.info("Step 3/3  Running speaker diarization...")
-    diarize_model = whisperx.DiarizationPipeline(
-        use_auth_token=hf_token, device=diarize_device
+    log.info(f"          Using model: {diarize_model}")
+    diarize_pipeline = DiarizationPipeline(
+        model_name=diarize_model,
+        token=hf_token,
+        device=torch.device(diarize_device),
     )
-    diarize_segments = diarize_model(audio, num_speakers=num_speakers)
+    diarize_segments = diarize_pipeline(audio, num_speakers=num_speakers)
     result = whisperx.assign_word_speakers(diarize_segments, result)
 
     # ── Build clean segment list ───────────────────────────────────────────
@@ -138,6 +144,7 @@ def transcribe(audio_path, output_dir, hf_token, num_speakers, config_path):
         "audio_file": input_path.name,
         "language": "es",
         "model": "large-v3",
+        "diarize_model": diarize_model,
         "num_speakers_requested": num_speakers,
         "speakers_found": speakers_found,
         "total_segments": len(segments),
