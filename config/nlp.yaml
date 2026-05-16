@@ -1,0 +1,9 @@
+model: en_core_web_sm   # en_core_web_sm | en_core_web_md | en_core_web_trf
+entities:
+  - PERSON
+  - ORG
+  - GPE
+  - DATE
+  - TIME
+  - MONEY
+  - PRODUCT

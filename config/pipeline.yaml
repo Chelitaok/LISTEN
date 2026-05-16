@@ -1,0 +1,5 @@
+log_level: INFO
+input_dir: data/audio
+transcript_dir: data/transcripts
+processed_dir: data/processed
+output_dir: outputs

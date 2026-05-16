@@ -1,0 +1,20 @@
+# ASR
+openai-whisper>=20231117
+torch>=2.0.0
+torchaudio>=2.0.0
+ffmpeg-python>=0.2.0
+
+# NLP
+spacy>=3.7.0
+
+# Utilities
+pydantic>=2.0.0
+pyyaml>=6.0
+tqdm>=4.66.0
+click>=8.1.0
+
+# Dev / testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+jupyter>=1.0.0
+ipykernel>=6.25.0
