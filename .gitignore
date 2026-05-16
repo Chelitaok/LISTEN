@@ -33,6 +33,9 @@ models/*
 *.env.local
 config/secrets.yaml
 
+# HuggingFace cache (large model files)
+.cache/
+
 # OS
 .DS_Store
 Thumbs.db
